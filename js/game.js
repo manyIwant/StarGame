@@ -7,7 +7,8 @@ var S = {
   vTs:null, hibMode:null, hibWP:null, hibStart:null, hib:false,
   tick:null, hibTick:null, cart:[],
   user:null, balance:0,
-  shipName:'探索者号', energy:100, minerals:50, dataCrystals:0, reputation:0, shipLevel:1
+  shipName:'探索者号', energy:100, minerals:50, dataCrystals:0, reputation:0, shipLevel:1,
+  currentLocation:'太阳系', currentPlanet:null
 };
 
 function updBat(){
@@ -301,22 +302,42 @@ function shipLaunchFX(){
 
 
 // ===== 星际探索系统 =====
-function explore(){
-  var evts=EXPLORE_EVENTS.slice();
-  var ev=evts[Math.floor(Math.random()*evts.length)];
-  var msg='';
-  for(var k in ev.eff){
-    var v=ev.eff[k];
-    if(k==='energy'){S.energy=Math.max(0,S.energy+v);msg+='\n⚡ 能源 '+(v>=0?'+':'')+v+' (当前:'+S.energy+')';}
-    else if(k==='minerals'){S.minerals=Math.max(0,S.minerals+v);msg+='\n⛏ 矿物 '+(v>=0?'+':'')+v+' (当前:'+S.minerals+')';}
-    else if(k==='dataCrystals'){S.dataCrystals=Math.max(0,S.dataCrystals+v);msg+='\n💾 数据 '+(v>=0?'+':'')+v+' (当前:'+S.dataCrystals+')';}
-    else if(k==='reputation'){S.reputation=Math.max(0,S.reputation+v);msg+='\n⭐ 声望 '+(v>=0?'+':'')+v+' (当前:'+S.reputation+')';}
-  }
+function navigate(){
+  if(!S.user){openMod('modalLogin');return;}
+  if(S.energy<NAVIGATION_COST){alert('❌ 能源不足！需要 '+NAVIGATION_COST+' 能源，当前: '+S.energy);return;}
+  S.energy-=NAVIGATION_COST;
+  var pt=PLANET_TYPES[Math.floor(Math.random()*PLANET_TYPES.length)];
+  var pre=PLANET_NAMES_PRE[Math.floor(Math.random()*PLANET_NAMES_PRE.length)];
+  var suf=PLANET_NAMES_SUF[Math.floor(Math.random()*PLANET_NAMES_SUF.length)];
+  var pname=pre+suf;
+  var minR=pt.minerals,datR=pt.data;
+  var minerals=Math.floor(minR[0]+Math.random()*(minR[1]-minR[0]));
+  var dataC=Math.floor(datR[0]+Math.random()*(datR[1]-datR[0]));
+  S.currentPlanet={name:pname,type:pt.type,danger:pt.danger,desc:pt.desc,color:pt.color,minerals:minerals,dataCrystals:dataC,explored:false};
+  S.currentLocation='深空 · '+pname+'轨道';
+  savePlayer();renExplorerUI();
+}
+function explorePlanet(){
+  if(!S.user){openMod('modalLogin');return;}
+  if(!S.currentPlanet){alert('⚠ 请先航行发现星球');return;}
+  if(S.currentPlanet.explored){alert('⚠ 该星球已探索过，请继续航行');return;}
+  var p=S.currentPlanet;
+  S.minerals+=p.minerals;S.dataCrystals+=p.dataCrystals;
+  var repGain=Math.floor(Math.random()*10)+5;
+  S.reputation+=repGain;
+  var energyLoss=Math.floor(Math.random()*10)+5;
+  S.energy=Math.max(0,S.energy-energyLoss);
+  S.currentPlanet.explored=true;
   savePlayer();renExplorerUI();syncPlayer();
-  alert('🔭 '+ev.title+'\n\n'+ev.desc+'\n'+msg);
-  if(S.energy<=0){alert('⚠ 能源耗尽！请等待充能或使用能量水晶。');S.energy=Math.max(0,S.energy);savePlayer();renExplorerUI();}
+  alert('🔭 探索 '+p.name+' ('+p.type+')\n\n'+p.desc+'\n\n⛏ 矿物 +'+p.minerals+' (当前:'+S.minerals+')\n💾 数据 +'+p.dataCrystals+' (当前:'+S.dataCrystals+')\n⭐ 声望 +'+repGain+' (当前:'+S.reputation+')\n⚡ 能源 -'+energyLoss+' (当前:'+S.energy+')');
+  if(S.energy<=0){alert('⚠ 能源耗尽！返回太阳系充能。');S.currentLocation='太阳系';S.currentPlanet=null;S.energy=Math.max(10,S.energy);savePlayer();renExplorerUI();}
+}
+function leavePlanet(){
+  S.currentPlanet=null;S.currentLocation='深空';
+  savePlayer();renExplorerUI();
 }
 function upgradeShip(){
+  if(!S.user){openMod('modalLogin');return;}
   if(S.minerals<UPGRADE_COST.minerals){alert('❌ 矿物不足！需要 '+UPGRADE_COST.minerals+' 矿物，当前: '+S.minerals);return;}
   if(S.dataCrystals<UPGRADE_COST.dataCrystals){alert('❌ 数据不足！需要 '+UPGRADE_COST.dataCrystals+' 数据，当前: '+S.dataCrystals);return;}
   S.minerals-=UPGRADE_COST.minerals;S.dataCrystals-=UPGRADE_COST.dataCrystals;

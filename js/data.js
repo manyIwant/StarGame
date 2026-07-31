@@ -154,6 +154,7 @@ function syncPlayer(){
     balance:S.balance,
     orders_count:S.orders.length,
     total_ly:getTotalLY(),
+    current_location:S.currentLocation||'太阳系',
     achievements:(function(){var c=0;for(var k in ACHIEVEMENTS){if(ACHIEVEMENTS[k].unlocked)c++;}return c;})(),
     updated_at:new Date().toISOString()
   };
@@ -173,6 +174,22 @@ var COSMIC_EVENTS=[
 ];
 
 // ===== 星际探索游戏数据 =====
+
+// ===== 星球系统 =====
+var PLANET_TYPES=[
+  {type:'冰冻星球',danger:'低',desc:'表面覆盖厚冰层，下方可能存在液态海洋。',color:'#a5f0fc',minerals:[15,35],data:[5,15]},
+  {type:'荒芜星球',danger:'高',desc:'一片死寂的岩石世界，大气稀薄。资源稀少。',color:'#c4b5a5',minerals:[5,15],data:[0,10]},
+  {type:'火山星球',danger:'高',desc:'熔岩河流纵横，地壳极不稳定。高风险高回报。',color:'#f87171',minerals:[20,40],data:[5,10]},
+  {type:'海洋星球',danger:'低',desc:'全球被海洋覆盖，生物信号活跃。',color:'#60a5fa',minerals:[5,20],data:[15,30]},
+  {type:'森林星球',danger:'中',desc:'植被茂密，生态系统完整。生物数据丰富。',color:'#4ade80',minerals:[10,25],data:[10,25]},
+  {type:'沙漠星球',danger:'中',desc:'无尽沙丘下埋藏着古代文明遗迹。',color:'#fbbf24',minerals:[10,20],data:[10,20]},
+  {type:'气态巨星',danger:'中',desc:'巨大的气体行星，轨道有多个资源卫星。',color:'#c084fc',minerals:[10,30],data:[0,10]},
+  {type:'水晶星球',danger:'低',desc:'地表遍布能量水晶，光彩夺目。',color:'#e879f9',minerals:[20,35],data:[5,15]}
+];
+var PLANET_NAMES_PRE=['开普勒','格利泽','罗斯','比邻','巴纳德','天鹅','天琴','猎户','鲸鱼','凤凰','英仙','半人马','织女','天狼','参宿'];
+var PLANET_NAMES_SUF=['b','c','d','e','f','g','-I','-II','-III','-IV','Prime','Minor','Major'];
+var NAVIGATION_COST=15;
+
 var EXPLORE_EVENTS=[
   {id:'mineral',title:'🪐 发现矿物星球',desc:'探测器锁定了一颗富含稀有矿物的行星。采集机器人已出发。',eff:{minerals:20}},
   {id:'ruins',title:'🏛 发现古代遗迹',desc:'地表下埋藏着一个已消亡文明的遗迹。数据记录仪已满负荷运转。',eff:{dataCrystals:15,reputation:5}},
