@@ -7,6 +7,10 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<div id="debugPanel" style="position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(0,0,0,0.92);color:#0f0;font-family:monospace;font-size:11px;line-height:1.5;padding:6px 10px;max-height:35vh;overflow-y:auto;border-bottom:1px solid rgba(255,255,255,0.15)" onclick="this.style.display='none'" title="点击关闭">
+<div id="debugMsgs" style="word-break:break-all"></div>
+<div style="font-size:9px;color:#666;margin-top:2px">点击此区域关闭调试面板</div>
+</div>
 <div class="bg-nebula"></div>
 <canvas id="starCanvas"></canvas>
 <div class="bg-stars"></div>
