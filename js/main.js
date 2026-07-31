@@ -602,6 +602,8 @@ document.addEventListener('click',function(e){
 
 // 初始化星场 & 加载成就
 initStarfield();loadAch();loadUser();loadBalance();loadOrders();updateUserUI();
+setInterval(updBat,30000);updBat();
+setInterval(updClock,10000);updClock();
 FA('.mobile-tabs button').forEach(function(b){b.addEventListener('click',function(){goPage(b.dataset.page);});});
 FA('.tb-nav').forEach(function(b){b.addEventListener('click',function(){goPage(b.dataset.page);});});
 if(!S.user){setTimeout(function(){openMod('modalLogin');},500);}

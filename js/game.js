@@ -19,8 +19,6 @@ function updClock(){
   var t = new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
   for(var i=1;i<=15;i++){var el=$('st'+i);if(el)el.textContent=t;}
 }
-setInterval(updBat,30000);updBat();
-setInterval(updClock,10000);updClock();
 
 
 var curPage='page1';
