@@ -571,7 +571,6 @@ function showShareCard(){
 }
 function copyShareCard(){alert('📋 请截图保存此页面，分享到朋友圈！\n\n长按 → 截图 → 裁剪 → 分享');}
 
-var _origUU2=updateUserUI;updateUserUI=function(){_origUU2();updateSidebar();};
 
 var starCanvas,starCtx,stars=[];
 function initStarfield(){
