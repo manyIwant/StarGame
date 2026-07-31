@@ -507,7 +507,7 @@ function doLogin(){
   var u=$('loginUser').value.trim(),p=$('loginPass').value.trim();
   if(!u||!p){alert('请输入用户名和密码');return;}
   S.user={name:u,pass:p};localStorage.setItem('gdstar_user',JSON.stringify(S.user));
-  closeMod('modalLogin');updateUserUI();alert('✅ 欢迎，'+u+'！\n\n你的星际航行账户已就绪。\n初始余额 ¥0，请先充值。');
+  closeMod('modalLogin');updateUserUI();updateSidebar();alert('✅ 欢迎，'+u+'！\n\n你的星际航行账户已就绪。\n初始余额 ¥0，请先充值。');
 }
 function updateUserUI(){
   var un=S.user?S.user.name:'未登录';
@@ -550,8 +550,6 @@ function updateSidebar(){
   var done=S.orders.filter(function(o){return o.status==='done';}).length;
   $('doneStat')&&($('doneStat').textContent=done);
 }
-var _origUU2=updateUserUI;updateUserUI=function(){_origUU2();updateSidebar();};
-
 function showShareCard(){
   var totalLY=getTotalLY();var done=S.orders.filter(function(o){return o.status==='done';}).length;
   var achCount=0;for(var k in ACHIEVEMENTS){if(ACHIEVEMENTS[k].unlocked)achCount++;}
