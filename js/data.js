@@ -1,3 +1,16 @@
+// 调试输出函数
+function _dbg(t){var d=document.getElementById('debugMsgs');if(d)d.innerHTML+=t+'<br>';}
+_dbg('🟢 [data.js] 开始加载...');
+window._firstError=null;
+window.onerror=function(msg,url,line,col,err){
+  if(!window._firstError){
+    window._firstError={msg:msg,url:url,line:line};
+    var u=url||'';var fn=u.split('/').pop()||u;
+    _dbg('❌ 运行时错误: '+msg+' (文件:'+fn+', 行:'+line+')');
+    var panel=document.getElementById('debugPanel');
+    if(panel)panel.style.background='rgba(80,0,0,0.95)';
+  }
+};
 // ===== 星际飞船 / 方案数据 =====
 var PLANS = {
   cnsa:{n:'中国航天·长征跃迁舰',p:'¥1,280,000',c:'经济休眠舱',r:'Lv4',d:180,i:'🇨🇳'},
@@ -119,7 +132,6 @@ function fmtPrice(n){
 }
 
 // 弹窗内chip点击
-FA('.modal .chip').forEach(function(ch){ch.addEventListener('click',function(){this.classList.toggle('active');});});
 
 
 // ===== 星际成就配置 =====
@@ -145,5 +157,6 @@ var COSMIC_EVENTS=[
   {title:'🌟 观测到超新星爆发',body:'银河系旋臂方向检测到一次II型超新星爆发。距离约12万光年。飞船防护系统正在自动调整辐射屏蔽。你透过舷窗看到的光——是那颗恒星在12万年前死去的最后一瞥。',cond:function(p){return p>30&&p<70;}},
   {title:'🌀 时空褶皱预警',body:'前方航线检测到轻微时空褶皱——跃迁引擎能量波动约3.7%。飞船AI建议：降低0.02c巡航速度以避开扰动区域。预计到达时间将延迟约2小时。',cond:function(p){return p>50;}},
   {title:'👁 未知物体掠过',body:'一个金属光泽的物体从3点钟方向高速掠过飞船。直径约2米，梭形，表面无任何推进器痕迹。它没有响应任何通讯尝试。舰长的个人日志写着一行：「我不认为那是机器。」',cond:function(p){return p>20&&p<80;}},
-  {title:'💤 集体梦境',body:'休眠舱监控显示——所有处于休眠状态的乘客在同一时间进入了REM睡眠。他们的脑波模式高度相似，仿佛在做同一个梦。梦境内容无法获取。醒来后，没有人记得梦见了什么。',cond:function(p){return S.hib&&p>40;}}
+  {title:'💤 集体梦境',body:'休眠舱监控显示——所有处于休眠状态的乘客在同一时间进入了REM睡眠。它们的脑波模式高度相似，仿佛在做同一个梦。梦境内容无法获取。醒来后，没有人记得梦见了什么。',cond:function(p){return S.hib&&p>40;}}
 ];
+_dbg('🟢 [data.js] 加载完成 ✓');
