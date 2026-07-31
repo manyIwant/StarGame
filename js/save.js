@@ -13,3 +13,7 @@ function loadOrders(){try{var d=localStorage.getItem('gdstar_orders');if(d){var 
 // 成就存档/读取
 function loadAch(){try{var d=localStorage.getItem('gdstar_ach');if(d){var a=JSON.parse(d);for(var k in a){if(ACHIEVEMENTS[k])ACHIEVEMENTS[k].unlocked=a[k];}}}catch(e){}}
 function saveAch(){var o={};for(var k in ACHIEVEMENTS){o[k]=ACHIEVEMENTS[k].unlocked;}try{localStorage.setItem('gdstar_ach',JSON.stringify(o));}catch(e){}}
+
+// ===== 星际探索存档 =====
+function savePlayer(){try{var d={shipName:S.shipName,energy:S.energy,minerals:S.minerals,dataCrystals:S.dataCrystals,reputation:S.reputation,shipLevel:S.shipLevel};localStorage.setItem('gdstar_player',JSON.stringify(d));}catch(e){}}
+function loadPlayer(){try{var d=localStorage.getItem('gdstar_player');if(d){var p=JSON.parse(d);S.shipName=p.shipName||'探索者号';S.energy=p.energy!=null?p.energy:100;S.minerals=p.minerals!=null?p.minerals:50;S.dataCrystals=p.dataCrystals!=null?p.dataCrystals:0;S.reputation=p.reputation!=null?p.reputation:0;S.shipLevel=p.shipLevel||1;}}catch(e){}}

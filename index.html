@@ -53,7 +53,10 @@
 <div class="s-sec"><div class="s-label">🌌 航行统计</div>
 <div class="s-row"><span>累计光年</span><span style="color:#fcd34d;font-weight:700" id="lyStat">0</span></div>
 <div class="s-row"><span>完成航程</span><span style="color:#60a5fa;font-weight:700" id="doneStat">0</span></div>
-<div class="s-row" onclick="showShareCard()" style="cursor:pointer"><span>📋 航行护照</span><span style="color:var(--text3)">查看 ›</span></div>
+<div class="s-row" onclick="showShareCard()" style="cursor:pointer"><span>📋 航行护照</span><span style="color:var(--text3)">查看 ›</span><div class="s-sec"><div class="s-label">📊 管理</div>
+<div class="s-row" onclick="showAdminPanel()" style="cursor:pointer"><span>🔧 数据面板</span><span style="color:var(--text3)">查看 ›</span></div>
+</div>
+</div>
 </div>
 <div class="s-sec"><button class="btn btn-outline btn-block btn-sm" onclick="if(confirm('确定退出登录？数据保留在本地。')){S.user=null;localStorage.removeItem('gdstar_user');updateUserUI();updateSidebar();toggleSidebar();openMod('modalLogin');}">🚪 切换账号</button></div>
 </div>
@@ -63,6 +66,14 @@
 <!-- 页面1: 首页 -->
 <div class="page active" id="page1">
 <div class="status-bar"><span class="time" id="st1">--</span><span id="bat1">🔋 100%</span></div>
+<div class="card" style="text-align:center">
+<div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:8px">🚀 星际探索 · 控制面板</div>
+<div id="explorerResources"></div>
+<div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">
+<button class="btn btn-primary" onclick="explore()" style="font-size:14px;padding:10px 24px">🔭 探索星球</button>
+<button class="btn btn-outline" onclick="upgradeShip()" style="font-size:13px">⬆ 升级飞船 (⛏50 💾30)</button>
+</div>
+</div>
 <div class="search-card">
 <div class="search-points" id="searchPoints">
 <div class="sp-row"><div class="sp-dot start"></div><div class="sp-input"><input type="text" placeholder="出发地" value="地球（亚洲·海口）" class="js-origin"></div></div>
@@ -368,6 +379,14 @@
 
 <!-- 黑屏 -->
 <div class="black-screen" id="blackScreen"><div class="bs-icon">🧊</div><div class="bs-text" id="bsText">休眠中…</div></div>
+
+<!-- 数据面板弹窗 -->
+<div class="modal-overlay" id="modalAdmin"><div class="modal" style="max-width:500px">
+<button class="modal-close" onclick="closeMod('modalAdmin')">✕</button>
+<h3>📊 本机数据面板</h3>
+<div id="adminContent" style="font-size:13px;color:var(--text2);line-height:1.8"></div>
+<div style="font-size:10px;color:var(--text3);margin-top:12px">⚠ 仅显示当前设备上存储的数据</div>
+</div></div>
 
 <script src="js/data.js"></script>
 <script src="js/save.js"></script>

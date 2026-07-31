@@ -138,7 +138,39 @@ var LY_MAP={月球:0.00000004,火星:0.000024,谷神星:0.00004,太阳系:0.0004
 // ===== 累计光年计算 =====
 function getTotalLY(){var total=0;S.orders.forEach(function(o){if(o.status==='done'&&o.destination){for(var k in LY_MAP){if(o.destination.indexOf(k)>=0){total+=LY_MAP[k];break;}}}});return total;}
 
-// ===== 随机宇宙事件数据 =====
+// ===== Supabase 远程同步 =====
+var SUPABASE_URL='https://vtzaquqoxqldexmdkadj.supabase.co';
+var SUPABASE_KEY='sb_publishable_stN9RYWXRCKGfFL4fUszNA_nE5aew0Y';
+function syncPlayer(){
+  if(!S.user)return;
+  var d={
+    username:S.user.name,
+    ship_name:S.shipName,
+    ship_level:S.shipLevel,
+    energy:S.energy,
+    minerals:S.minerals,
+    data_crystals:S.dataCrystals,
+    reputation:S.reputation,
+    balance:S.balance,
+    orders_count:S.orders.length,
+    total_ly:getTotalLY(),
+    achievements:(function(){var c=0;for(var k in ACHIEVEMENTS){if(ACHIEVEMENTS[k].unlocked)c++;}return c;})(),
+    updated_at:new Date().toISOString()
+  };
+  fetch(SUPABASE_URL+'/rest/v1/players?username=eq.'+encodeURIComponent(S.user.name),{
+    method:'PATCH',
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify(d)
+  }).catch(function(){});
+  // If PATCH returns 0 rows (new user), insert
+  setTimeout(function(){
+    fetch(SUPABASE_URL+'/rest/v1/players',{
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify(d)
+    }).catch(function(){});
+  },500);
+}
 var COSMIC_EVENTS=[
   {title:'📡 收到陌生讯号',body:'飞船通讯阵列接收到一段无法解码的脉冲信号。来源未知。信号中包含一种重复模式——每22分钟重复一次，与任何已知天体周期都不匹配。舰长建议：继续航行，不要在日志中记录此事。',cond:function(p){return p>10&&p<40;}},
   {title:'🌟 观测到超新星爆发',body:'银河系旋臂方向检测到一次II型超新星爆发。距离约12万光年。飞船防护系统正在自动调整辐射屏蔽。你透过舷窗看到的光——是那颗恒星在12万年前死去的最后一瞥。',cond:function(p){return p>30&&p<70;}},
@@ -146,3 +178,17 @@ var COSMIC_EVENTS=[
   {title:'👁 未知物体掠过',body:'一个金属光泽的物体从3点钟方向高速掠过飞船。直径约2米，梭形，表面无任何推进器痕迹。它没有响应任何通讯尝试。舰长的个人日志写着一行：「我不认为那是机器。」',cond:function(p){return p>20&&p<80;}},
   {title:'💤 集体梦境',body:'休眠舱监控显示——所有处于休眠状态的乘客在同一时间进入了REM睡眠。它们的脑波模式高度相似，仿佛在做同一个梦。梦境内容无法获取。醒来后，没有人记得梦见了什么。',cond:function(p){return S.hib&&p>40;}}
 ];
+
+// ===== 星际探索游戏数据 =====
+var EXPLORE_EVENTS=[
+  {id:'mineral',title:'🪐 发现矿物星球',desc:'探测器锁定了一颗富含稀有矿物的行星。采集机器人已出发。',eff:{minerals:20}},
+  {id:'ruins',title:'🏛 发现古代遗迹',desc:'地表下埋藏着一个已消亡文明的遗迹。数据记录仪已满负荷运转。',eff:{dataCrystals:15,reputation:5}},
+  {id:'storm',title:'🌪 遭遇宇宙风暴',desc:'突如其来的离子风暴袭击了飞船。护盾消耗了大量能源。',eff:{energy:-20}},
+  {id:'alien',title:'👽 发现未知文明',desc:'通讯阵列接收到智慧信号！第一次接触协议已启动。',eff:{reputation:20}},
+  {id:'wreck',title:'🚀 发现废弃飞船',desc:'太空中漂浮着一艘古老的废弃飞船。打捞队回收了有用部件。',eff:{minerals:10,dataCrystals:5}},
+  {id:'nebula',title:'🌌 穿越星云',desc:'飞船穿越了一片美丽的发射星云。传感器收集了大量科学数据。',eff:{dataCrystals:25,energy:-10}},
+  {id:'crystal',title:'💎 发现能量水晶',desc:'一颗纯能量结晶的小行星！这种稀有资源在黑市上价值连城。',eff:{energy:30,reputation:5}},
+  {id:'trader',title:'🧑‍🚀 遇到星际商人',desc:'一艘商船请求交易。你用多余的矿石换取了珍贵数据。',eff:{minerals:-15,dataCrystals:30}}
+];
+var UPGRADE_COST={minerals:50,dataCrystals:30};
+var MAX_ENERGY_BASE=100;

@@ -506,7 +506,7 @@ function doLogin(){
   var u=$('loginUser').value.trim(),p=$('loginPass').value.trim();
   if(!u||!p){alert('请输入用户名和密码');return;}
   S.user={name:u,pass:p};localStorage.setItem('gdstar_user',JSON.stringify(S.user));
-  closeMod('modalLogin');updateUserUI();updateSidebar();alert('✅ 欢迎，'+u+'！\n\n你的星际航行账户已就绪。\n初始余额 ¥0，请先充值。');
+  closeMod('modalLogin');updateUserUI();updateSidebar();syncPlayer();alert('✅ 欢迎，'+u+'！\n\n你的星际航行账户已就绪。\n初始余额 ¥0，请先充值。');
 }
 function updateUserUI(){
   var un=S.user?S.user.name:'未登录';
@@ -586,6 +586,35 @@ function drawStars(){
   requestAnimationFrame(drawStars);
 }
 
+// ===== 星际探索 UI =====
+function renExplorerUI(){
+  var el=$('explorerResources');if(!el)return;
+  el.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;font-size:12px">'+
+    '<span style="background:rgba(22,120,255,0.15);padding:4px 10px;border-radius:12px;color:#60a5fa">⚡ 能源: '+S.energy+'</span>'+
+    '<span style="background:rgba(245,158,11,0.15);padding:4px 10px;border-radius:12px;color:#fbbf24">⛏ 矿物: '+S.minerals+'</span>'+
+    '<span style="background:rgba(34,197,94,0.15);padding:4px 10px;border-radius:12px;color:#4ade80">💾 数据: '+S.dataCrystals+'</span>'+
+    '<span style="background:rgba(168,85,247,0.15);padding:4px 10px;border-radius:12px;color:#c084fc">⭐ 声望: '+S.reputation+'</span>'+
+    '<span style="background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:12px;color:#fff">🚀 Lv.'+S.shipLevel+'</span>'+
+  '</div>';
+}
+function showAdminPanel(){
+  var d=[];updateSidebar();
+  d.push('👤 用户: '+(S.user?S.user.name:'未登录'));
+  d.push('💰 余额: ¥'+S.balance.toLocaleString());
+  d.push('🚀 飞船: '+S.shipName+' (Lv.'+S.shipLevel+')');
+  d.push('⚡ 能源: '+S.energy);
+  d.push('⛏ 矿物: '+S.minerals);
+  d.push('💾 数据: '+S.dataCrystals);
+  d.push('⭐ 声望: '+S.reputation);
+  d.push('📦 订单数: '+S.orders.length+' ('+S.orders.filter(function(o){return o.status==='flying';}).length+' 航行中, '+S.orders.filter(function(o){return o.status==='done';}).length+' 已完成)');
+  var ach=0;for(var k in ACHIEVEMENTS){if(ACHIEVEMENTS[k].unlocked)ach++;}
+  d.push('🏆 成就: '+ach+'/'+Object.keys(ACHIEVEMENTS).length);
+  d.push('💾 总光年: '+(getTotalLY()>=1?getTotalLY().toFixed(2):getTotalLY().toFixed(8)));
+  $('adminContent').innerHTML=d.map(function(x){return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)">'+x+'</div>';}).join('');
+  openMod('modalAdmin');
+}
+window.renExplorerUI=renExplorerUI;
+
 // ===== 按钮波纹 =====
 document.addEventListener('click',function(e){
   var btn=e.target.closest('.btn');if(!btn)return;
@@ -597,7 +626,7 @@ document.addEventListener('click',function(e){
 
 
 // 初始化星场 & 加载成就
-initStarfield();loadAch();loadUser();loadBalance();loadOrders();updateUserUI();
+initStarfield();loadAch();loadUser();loadBalance();loadOrders();loadPlayer();updateUserUI();
 setInterval(updBat,30000);updBat();
 setInterval(updClock,10000);updClock();
 FA('.mobile-tabs button').forEach(function(b){b.addEventListener('click',function(){goPage(b.dataset.page);});});
@@ -605,4 +634,5 @@ FA('.tb-nav').forEach(function(b){b.addEventListener('click',function(){goPage(b
 if(!S.user){setTimeout(function(){openMod('modalLogin');},500);}
 
 // 初始渲染
+renExplorerUI();
 renOrders();renMon();renDetail();updBadges();swDest(FA('#page8 .chip')[0],0);

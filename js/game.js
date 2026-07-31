@@ -6,7 +6,8 @@ var S = {
   origin:'地球（亚洲·海口）', dest:'', transits:[], flt:'all',
   vTs:null, hibMode:null, hibWP:null, hibStart:null, hib:false,
   tick:null, hibTick:null, cart:[],
-  user:null, balance:0  // 新增：用户信息和余额
+  user:null, balance:0,
+  shipName:'探索者号', energy:100, minerals:50, dataCrystals:0, reputation:0, shipLevel:1
 };
 
 function updBat(){
@@ -298,6 +299,31 @@ function shipLaunchFX(){
   setTimeout(function(){fx.remove();},1200);
 }
 
+
+// ===== 星际探索系统 =====
+function explore(){
+  var evts=EXPLORE_EVENTS.slice();
+  var ev=evts[Math.floor(Math.random()*evts.length)];
+  var msg='';
+  for(var k in ev.eff){
+    var v=ev.eff[k];
+    if(k==='energy'){S.energy=Math.max(0,S.energy+v);msg+='\n⚡ 能源 '+(v>=0?'+':'')+v+' (当前:'+S.energy+')';}
+    else if(k==='minerals'){S.minerals=Math.max(0,S.minerals+v);msg+='\n⛏ 矿物 '+(v>=0?'+':'')+v+' (当前:'+S.minerals+')';}
+    else if(k==='dataCrystals'){S.dataCrystals=Math.max(0,S.dataCrystals+v);msg+='\n💾 数据 '+(v>=0?'+':'')+v+' (当前:'+S.dataCrystals+')';}
+    else if(k==='reputation'){S.reputation=Math.max(0,S.reputation+v);msg+='\n⭐ 声望 '+(v>=0?'+':'')+v+' (当前:'+S.reputation+')';}
+  }
+  savePlayer();renExplorerUI();syncPlayer();
+  alert('🔭 '+ev.title+'\n\n'+ev.desc+'\n'+msg);
+  if(S.energy<=0){alert('⚠ 能源耗尽！请等待充能或使用能量水晶。');S.energy=Math.max(0,S.energy);savePlayer();renExplorerUI();}
+}
+function upgradeShip(){
+  if(S.minerals<UPGRADE_COST.minerals){alert('❌ 矿物不足！需要 '+UPGRADE_COST.minerals+' 矿物，当前: '+S.minerals);return;}
+  if(S.dataCrystals<UPGRADE_COST.dataCrystals){alert('❌ 数据不足！需要 '+UPGRADE_COST.dataCrystals+' 数据，当前: '+S.dataCrystals);return;}
+  S.minerals-=UPGRADE_COST.minerals;S.dataCrystals-=UPGRADE_COST.dataCrystals;
+  S.shipLevel++;S.energy=MAX_ENERGY_BASE+S.shipLevel*20;
+  savePlayer();renExplorerUI();syncPlayer();
+  alert('🚀 飞船升级成功！\n\n等级: '+S.shipLevel+'\n最大能源: '+S.energy+'\n\n探索者号已变得更加强大！');
+}
 
 // ===== 成就覆盖 =====
 var _origDC=doConfirm;doConfirm=function(){_origDC();unlockAch('firstOrder');shipLaunchFX();};
