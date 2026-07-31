@@ -1,4 +1,3 @@
-_dbg('🟢 [main.js] 开始加载...');
 // ===== UI 交互 & 页面初始化 =====
 
 // ===== 工具函数 =====
@@ -607,9 +606,3 @@ if(!S.user){setTimeout(function(){openMod('modalLogin');},500);}
 
 // 初始渲染
 renOrders();renMon();renDetail();updBadges();swDest(FA('#page8 .chip')[0],0);
-_dbg('🟢 [main.js] 加载完成 ✓');
-if(window._firstError){
-  _dbg('⚠ 捕获到错误: '+window._firstError.msg);
-} else {
-  _dbg('✅ 全部JS加载完毕，无错误');
-}
