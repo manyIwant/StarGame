@@ -1,3 +1,4 @@
+_dbg('🟢 [game.js] 开始加载...');
 // ===== 核心游戏逻辑 =====
 
 // ===== 状态 =====
@@ -36,9 +37,6 @@ function goPage(id){
   if(id==='page4')renDetail();
   if(id==='page8')swDest(FA('#page8 .chip')[0],0);
 }
-FA('.mobile-tabs button').forEach(function(b){b.addEventListener('click',function(){goPage(b.dataset.page);});});
-
-
 function doConfirm(){
   if(!checkLogin())return;
   closeMod('modalRisk');resetRisk();clearInterval(cdTimer);
@@ -310,3 +308,4 @@ var _origBO=boardOrd;boardOrd=function(oid){_origBO(oid);unlockAch('deepSleep');
 var _origFH=finishHib;finishHib=function(){var mode=S.hibMode;_origFH();if(mode==='full')unlockAch('deepSleep');if(mode==='next')unlockAch('nextStop');};
 var _origSW=showWakeup;showWakeup=function(o,i){_origSW(o,i);if(i>=o.waypoints.length-1){var d=o.destination||'';if(d.indexOf('月球')>=0)unlockAch('moonTrip');if(d.indexOf('火星')>=0)unlockAch('marsTrip');if(d.indexOf('翁法罗斯')>=0)unlockAch('omphalos');if(d.indexOf('比邻星')>=0||d.indexOf('三体')>=0)unlockAch('trisolaris');if(d.indexOf('B612')>=0||d.indexOf('小王子')>=0)unlockAch('b612');setTimeout(function(){showShareCard();},3000);}};
 var _origRM=renMonLive;renMonLive=function(){_origRM();var o=S.aid?S.orders.find(function(od){return od.id===S.aid;}):null;if(o&&o.status==='flying'){var tm=o.arrivalTime-o.departureTime;var p=tm>0?((Date.now()-(S.vTs||Date.now()))/tm*100):0;checkRandomEvent(p);}};
+_dbg('🟢 [game.js] 加载完成 ✓');
