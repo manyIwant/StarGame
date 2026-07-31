@@ -157,19 +157,12 @@ function syncPlayer(){
     achievements:(function(){var c=0;for(var k in ACHIEVEMENTS){if(ACHIEVEMENTS[k].unlocked)c++;}return c;})(),
     updated_at:new Date().toISOString()
   };
-  fetch(SUPABASE_URL+'/rest/v1/players?username=eq.'+encodeURIComponent(S.user.name),{
-    method:'PATCH',
-    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+  // 用 POST + upsert 确保新老玩家都能写入
+  fetch(SUPABASE_URL+'/rest/v1/players',{
+    method:'POST',
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
     body:JSON.stringify(d)
   }).catch(function(){});
-  // If PATCH returns 0 rows (new user), insert
-  setTimeout(function(){
-    fetch(SUPABASE_URL+'/rest/v1/players',{
-      method:'POST',
-      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
-      body:JSON.stringify(d)
-    }).catch(function(){});
-  },500);
 }
 var COSMIC_EVENTS=[
   {title:'📡 收到陌生讯号',body:'飞船通讯阵列接收到一段无法解码的脉冲信号。来源未知。信号中包含一种重复模式——每22分钟重复一次，与任何已知天体周期都不匹配。舰长建议：继续航行，不要在日志中记录此事。',cond:function(p){return p>10&&p<40;}},
