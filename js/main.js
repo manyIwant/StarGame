@@ -586,6 +586,20 @@ function drawStars(){
   requestAnimationFrame(drawStars);
 }
 
+// ===== 首页控制中心 =====
+function renDashboard(){
+  var maxE=MAX_ENERGY_BASE+S.shipLevel*20;
+  var sn=$('dashShipName');if(sn)sn.textContent=S.shipName;
+  var ds=$('dashStatus');if(ds)ds.textContent='● 正常航行';
+  var dl=$('dashLocation');if(dl)dl.textContent=S.currentLocation||'太阳系';
+  var dr=$('dashResources');
+  if(dr)dr.innerHTML='<span style="background:rgba(22,120,255,0.15);padding:5px 12px;border-radius:14px;color:#60a5fa">⚡ '+S.energy+'/'+maxE+'</span>'+
+    '<span style="background:rgba(245,158,11,0.15);padding:5px 12px;border-radius:14px;color:#fbbf24">⛏ '+S.minerals+'</span>'+
+    '<span style="background:rgba(34,197,94,0.15);padding:5px 12px;border-radius:14px;color:#4ade80">💾 '+S.dataCrystals+'</span>'+
+    '<span style="background:rgba(168,85,247,0.15);padding:5px 12px;border-radius:14px;color:#c084fc">⭐ '+S.reputation+'</span>'+
+    '<span style="background:rgba(255,255,255,0.08);padding:5px 12px;border-radius:14px;color:#fff">🚀 Lv.'+S.shipLevel+'</span>';
+}
+
 // ===== 星际探索页面 =====
 function renExplorePage(){
   var el=$('exploreContent');if(!el)return;
@@ -691,4 +705,5 @@ FA('.tb-nav').forEach(function(b){b.addEventListener('click',function(){goPage(b
 if(!S.user){setTimeout(function(){openMod('modalLogin');},500);}
 
 // 初始渲染
+renDashboard();
 renOrders();renMon();renDetail();updBadges();swDest(FA('#page8 .chip')[0],0);

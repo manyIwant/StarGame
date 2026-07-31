@@ -31,6 +31,7 @@ function goPage(id){
   FA('.mobile-tabs button').forEach(function(b){b.classList.toggle('active',b.dataset.page===id);});
   FA('.tb-nav').forEach(function(b){b.classList.toggle('active',b.dataset.page===id);});
   $('mainContent').scrollTop=0;
+  if(id==='page1')renDashboard();
   if(id==='page2'){renRoute();updatePlanPrices();if(checkTrisolaris()){openEraModal();}}
   if(id==='page5')renOrders();
   if(id==='page10')renMon();
