@@ -8,7 +8,8 @@ var S = {
   tick:null, hibTick:null, cart:[],
   user:null, balance:0,
   shipName:'探索者号', energy:100, minerals:50, dataCrystals:0, reputation:0, shipLevel:1,
-  currentLocation:'太阳系', currentPlanet:null
+  currentLocation:'太阳系', currentPlanet:null,
+  exploredPlanets:[]
 };
 
 function updBat(){
@@ -35,6 +36,7 @@ function goPage(id){
   if(id==='page10')renMon();
   if(id==='page4')renDetail();
   if(id==='page8')swDest(FA('#page8 .chip')[0],0);
+  if(id==='page20')renExplorePage();
 }
 function doConfirm(){
   if(!checkLogin())return;
@@ -315,7 +317,7 @@ function navigate(){
   var dataC=Math.floor(datR[0]+Math.random()*(datR[1]-datR[0]));
   S.currentPlanet={name:pname,type:pt.type,danger:pt.danger,desc:pt.desc,color:pt.color,minerals:minerals,dataCrystals:dataC,explored:false};
   S.currentLocation='深空 · '+pname+'轨道';
-  savePlayer();renExplorerUI();
+  savePlayer();renExplorePage();
 }
 function explorePlanet(){
   if(!S.user){openMod('modalLogin');return;}
@@ -328,13 +330,14 @@ function explorePlanet(){
   var energyLoss=Math.floor(Math.random()*10)+5;
   S.energy=Math.max(0,S.energy-energyLoss);
   S.currentPlanet.explored=true;
-  savePlayer();renExplorerUI();syncPlayer();
+  S.exploredPlanets.push({name:p.name,type:p.type,minerals:p.minerals,dataCrystals:p.dataCrystals,time:new Date().toISOString()});
+  savePlayer();renExplorePage();syncPlayer();
   alert('🔭 探索 '+p.name+' ('+p.type+')\n\n'+p.desc+'\n\n⛏ 矿物 +'+p.minerals+' (当前:'+S.minerals+')\n💾 数据 +'+p.dataCrystals+' (当前:'+S.dataCrystals+')\n⭐ 声望 +'+repGain+' (当前:'+S.reputation+')\n⚡ 能源 -'+energyLoss+' (当前:'+S.energy+')');
-  if(S.energy<=0){alert('⚠ 能源耗尽！返回太阳系充能。');S.currentLocation='太阳系';S.currentPlanet=null;S.energy=Math.max(10,S.energy);savePlayer();renExplorerUI();}
+  if(S.energy<=0){alert('⚠ 能源耗尽！返回太阳系充能。');S.currentLocation='太阳系';S.currentPlanet=null;S.energy=Math.max(10,S.energy);savePlayer();renExplorePage();}
 }
 function leavePlanet(){
   S.currentPlanet=null;S.currentLocation='深空';
-  savePlayer();renExplorerUI();
+  savePlayer();renExplorePage();
 }
 function upgradeShip(){
   if(!S.user){openMod('modalLogin');return;}
@@ -342,7 +345,7 @@ function upgradeShip(){
   if(S.dataCrystals<UPGRADE_COST.dataCrystals){alert('❌ 数据不足！需要 '+UPGRADE_COST.dataCrystals+' 数据，当前: '+S.dataCrystals);return;}
   S.minerals-=UPGRADE_COST.minerals;S.dataCrystals-=UPGRADE_COST.dataCrystals;
   S.shipLevel++;S.energy=MAX_ENERGY_BASE+S.shipLevel*20;
-  savePlayer();renExplorerUI();syncPlayer();
+  savePlayer();renExplorePage();syncPlayer();
   alert('🚀 飞船升级成功！\n\n等级: '+S.shipLevel+'\n最大能源: '+S.energy+'\n\n探索者号已变得更加强大！');
 }
 

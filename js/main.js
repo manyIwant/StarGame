@@ -586,41 +586,75 @@ function drawStars(){
   requestAnimationFrame(drawStars);
 }
 
-// ===== 星际探索 UI =====
-function renExplorerUI(){
-  var el=$('explorerResources');if(!el)return;
+// ===== 星际探索页面 =====
+function renExplorePage(){
+  var el=$('exploreContent');if(!el)return;
   var maxE=MAX_ENERGY_BASE+S.shipLevel*20;
-  el.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;font-size:12px;margin-bottom:8px">'+
-    '<span style="background:rgba(22,120,255,0.15);padding:4px 10px;border-radius:12px;color:#60a5fa">⚡ '+S.energy+'/'+maxE+'</span>'+
-    '<span style="background:rgba(245,158,11,0.15);padding:4px 10px;border-radius:12px;color:#fbbf24">⛏ '+S.minerals+'</span>'+
-    '<span style="background:rgba(34,197,94,0.15);padding:4px 10px;border-radius:12px;color:#4ade80">💾 '+S.dataCrystals+'</span>'+
-    '<span style="background:rgba(168,85,247,0.15);padding:4px 10px;border-radius:12px;color:#c084fc">⭐ '+S.reputation+'</span>'+
-    '<span style="background:rgba(255,255,255,0.08);padding:4px 10px;border-radius:12px;color:#fff">🚀 Lv.'+S.shipLevel+'</span>'+
-  '</div>';
-  // Location & planet info
-  var loc=S.currentLocation||'太阳系';
-  el.innerHTML+='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">📍 位置: <b style="color:#fff">'+loc+'</b></div>';
+  var h='';
+  // 飞船状态卡片
+  h+='<div class="card" style="text-align:center">';
+  h+='<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">🚀 '+S.shipName+'</div>';
+  h+='<div style="font-size:12px;color:var(--text2);margin-bottom:10px">等级 '+S.shipLevel+' · 最大能源 '+maxE+'</div>';
+  h+='<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-size:12px">';
+  h+='<span style="background:rgba(22,120,255,0.15);padding:5px 12px;border-radius:14px;color:#60a5fa">⚡ '+S.energy+'/'+maxE+'</span>';
+  h+='<span style="background:rgba(245,158,11,0.15);padding:5px 12px;border-radius:14px;color:#fbbf24">⛏ '+S.minerals+'</span>';
+  h+='<span style="background:rgba(34,197,94,0.15);padding:5px 12px;border-radius:14px;color:#4ade80">💾 '+S.dataCrystals+'</span>';
+  h+='<span style="background:rgba(168,85,247,0.15);padding:5px 12px;border-radius:14px;color:#c084fc">⭐ '+S.reputation+'</span>';
+  h+='</div></div>';
+  // 当前位置
+  h+='<div class="card">';
+  h+='<div class="card-title">📍 当前位置</div>';
+  h+='<div style="font-size:15px;color:#fff;font-weight:600">'+(S.currentLocation||'太阳系')+'</div>';
+  h+='</div>';
+  // 星球信息或航行按钮
   if(S.currentPlanet){
     var p=S.currentPlanet;
-    var dangerColor=p.danger==='低'?'#4ade80':p.danger==='中'?'#fbbf24':'#f87171';
-    el.innerHTML+='<div style="background:rgba(255,255,255,0.04);border-left:3px solid '+(p.color||'#fff')+';border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px">'+
-      '<div style="font-weight:700;color:#fff;font-size:14px">🪐 '+p.name+'</div>'+
-      '<div style="font-size:11px;color:var(--text2);margin-top:2px">'+p.type+' · 危险 <span style="color:'+dangerColor+'">'+p.danger+'</span> · '+p.desc+'</div>'+
-      '<div style="font-size:11px;margin-top:4px">⛏ 预估矿物: '+p.minerals+' | 💾 预估数据: '+p.dataCrystals+'</div>'+
-    '</div>';
-    var btns='';
-    if(!p.explored){
-      btns+='<button class="btn btn-primary" onclick="explorePlanet()" style="font-size:14px;padding:10px 24px;margin-right:8px">🔍 探索星球</button>';
-    } else {
-      btns+='<span style="font-size:12px;color:#4ade80">✅ 已探索</span> ';
+    var dn=p.danger==='低'?'#4ade80':p.danger==='中'?'#fbbf24':'#f87171';
+    h+='<div class="location-hero" style="border-left:3px solid '+(p.color||'#fff')+'">';
+    h+='<div class="loc-bg bg-earth" style="background:linear-gradient(135deg,'+(p.color||'#333')+'22,'+(p.color||'#333')+'08)"></div>';
+    h+='<div class="loc-overlay"></div>';
+    h+='<div class="loc-info">';
+    h+='<div class="loc-name">🪐 '+p.name+'</div>';
+    h+='<div class="loc-desc">'+p.type+' · 危险 <b style="color:'+dn+'">'+p.danger+'</b></div>';
+    h+='</div></div>';
+    h+='<div class="card">';
+    h+='<div style="font-size:13px;color:var(--text2);line-height:1.6">'+p.desc+'</div>';
+    h+='<div style="display:flex;gap:12px;margin-top:10px;font-size:12px">';
+    h+='<span style="color:#fbbf24">⛏ 预估矿物: '+p.minerals+'</span>';
+    h+='<span style="color:#4ade80">💾 预估数据: '+p.dataCrystals+'</span>';
+    h+='</div>';
+    if(p.explored){
+      h+='<div style="margin-top:10px;padding:8px 12px;background:rgba(34,197,94,0.1);border-radius:8px;color:#4ade80;font-size:13px">✅ 已探索 · ⛏+'+p.minerals+' 💾+'+p.dataCrystals+'</div>';
     }
-    btns+='<button class="btn btn-outline btn-sm" onclick="leavePlanet()">🚀 离开继续航行</button>';
-    el.innerHTML+='<div style="text-align:center">'+btns+'</div>';
+    h+='</div>';
+    // 操作按钮
+    h+='<div style="text-align:center;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">';
+    if(!p.explored){
+      h+='<button class="btn btn-primary" onclick="explorePlanet()" style="font-size:14px;padding:12px 28px">🔍 探索星球</button>';
+    }
+    h+='<button class="btn btn-outline" onclick="leavePlanet()">🚀 离开继续航行</button>';
+    h+='</div>';
   } else {
-    el.innerHTML+='<div style="text-align:center"><button class="btn btn-primary" onclick="navigate()" style="font-size:14px;padding:10px 24px">🚀 开始航行 (⚡'+NAVIGATION_COST+')</button></div>';
+    h+='<div style="text-align:center;padding:20px">';
+    h+='<button class="btn btn-primary" onclick="navigate()" style="font-size:16px;padding:14px 40px">🚀 曲速航行 (⚡'+NAVIGATION_COST+')</button>';
+    h+='</div>';
   }
-  // Upgrade button always visible
-  el.innerHTML+='<div style="text-align:center;margin-top:8px"><button class="btn btn-outline btn-sm" onclick="upgradeShip()">⬆ 升级飞船 (⛏'+UPGRADE_COST.minerals+' 💾'+UPGRADE_COST.dataCrystals+')</button></div>';
+  // 升级按钮
+  h+='<div class="card" style="text-align:center">';
+  h+='<div class="card-title">⬆ 飞船升级</div>';
+  h+='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">消耗 ⛏'+UPGRADE_COST.minerals+' 💾'+UPGRADE_COST.dataCrystals+' · 当前等级 '+S.shipLevel+'</div>';
+  h+='<button class="btn btn-outline" onclick="upgradeShip()">升级至 Lv.'+(S.shipLevel+1)+' (能源上限 +20)</button>';
+  h+='</div>';
+  // 探索日志
+  if(S.exploredPlanets&&S.exploredPlanets.length>0){
+    h+='<div class="card"><div class="card-title">📖 探索日志 ('+S.exploredPlanets.length+'个星球)</div>';
+    for(var i=S.exploredPlanets.length-1;i>=Math.max(0,S.exploredPlanets.length-5);i--){
+      var ep=S.exploredPlanets[i];
+      h+='<div style="font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04)">🪐 '+ep.name+' · <span style="color:var(--text3)">'+ep.type+'</span> · ⛏'+ep.minerals+' 💾'+ep.dataCrystals+'</div>';
+    }
+    h+='</div>';
+  }
+  el.innerHTML=h;
 }
 function showAdminPanel(){
   var d=[];updateSidebar();
@@ -638,8 +672,6 @@ function showAdminPanel(){
   $('adminContent').innerHTML=d.map(function(x){return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05)">'+x+'</div>';}).join('');
   openMod('modalAdmin');
 }
-window.renExplorerUI=renExplorerUI;
-
 // ===== 按钮波纹 =====
 document.addEventListener('click',function(e){
   var btn=e.target.closest('.btn');if(!btn)return;
@@ -659,5 +691,4 @@ FA('.tb-nav').forEach(function(b){b.addEventListener('click',function(){goPage(b
 if(!S.user){setTimeout(function(){openMod('modalLogin');},500);}
 
 // 初始渲染
-renExplorerUI();
 renOrders();renMon();renDetail();updBadges();swDest(FA('#page8 .chip')[0],0);

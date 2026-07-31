@@ -30,6 +30,7 @@
 <button class="tb-nav" data-page="page10">监控</button>
 <button class="tb-nav" data-page="page8">目的地</button>
 <button class="tb-nav" data-page="page15">通讯</button>
+<button class="tb-nav" data-page="page20">探索</button>
 </nav>
 <span style="margin-left:auto;font-size:12px;color:var(--text2)">👤 <b class="js-username" style="color:#fcd34d">未登录</b></span>
 <span style="font-size:12px;color:#4ade80;font-weight:700;margin-left:8px" id="balDesk">¥0</span>
@@ -66,12 +67,7 @@
 <!-- 页面1: 首页 -->
 <div class="page active" id="page1">
 <div class="status-bar"><span class="time" id="st1">--</span><span id="bat1">🔋 100%</span></div>
-<div class="search-card" id="explorePanel">
-<div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:10px">🌌 星际航行</div>
-<div id="explorerResources"></div>
-<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08)">
-<div style="font-size:11px;color:var(--text3);margin-bottom:6px;cursor:pointer" onclick="var s=document.getElementById('quickSearch');s.style.display=s.style.display==='none'?'block':'none'">🎫 快速订票 ›</div>
-<div id="quickSearch" style="display:none">
+<div class="search-card">
 <div class="search-points" id="searchPoints">
 <div class="sp-row"><div class="sp-dot start"></div><div class="sp-input"><input type="text" placeholder="出发地" value="地球（亚洲·海口）" class="js-origin"></div></div>
 <button class="add-transit" id="addTransitBtn" onclick="addTransit()">+ 添加中转点</button>
@@ -80,13 +76,14 @@
 <div class="candidates-scroll">
 <span class="chip">地球（亚洲·海口）</span><span class="chip">月球静海中转港</span><span class="chip">火星奥林匹斯港</span><span class="chip">谷神星补给站</span><span class="chip">太阳系跃迁枢纽</span><span class="chip">半人马座α星</span><span class="chip">天狼星殖民地</span><span class="chip">大麦哲伦云前哨</span><span class="chip">仙女座M31</span><span class="chip">巴纳德星中转站</span><span class="chip">罗斯128殖民地</span><span class="chip">格利泽581宜居站</span>
 </div>
-<button class="btn btn-primary btn-block btn-sm" style="margin-top:8px" onclick="goPage('page2')">🔍 搜索航线</button>
+<div class="travel-options">
+<span class="topt" onclick="selTopt(this)">🚗 驾车</span><span class="topt" onclick="selTopt(this)">✈ 大气层航班</span><span class="topt active" onclick="selTopt(this)">🚀 星际穿梭艇</span><span class="topt" onclick="selTopt(this)">🌌 跨星系跃迁舰</span><span class="topt" onclick="selTopt(this)">⚡ 超光速实验</span>
 </div>
-</div>
-</div>
+<button class="btn btn-primary btn-block" style="margin-top:14px" onclick="goPage('page2')">🔍 搜索星际航线</button>
 <div style="display:flex;gap:10px;margin-top:12px">
 <div class="card" style="flex:1;text-align:center;cursor:pointer" onclick="openMod('modalWeather')"><div style="font-size:28px">🌌</div><div style="font-size:13px;color:#fff;margin-top:4px">星际天气</div><div style="font-size:11px;color:var(--text3)">太阳活动·平静</div></div>
 <div class="card" style="flex:1;text-align:center;cursor:pointer" onclick="openMod('modalRadiation')"><div style="font-size:28px">⚠️</div><div style="font-size:13px;color:#fff;margin-top:4px">辐射预警</div><div style="font-size:11px;color:var(--green)">当前·安全级别</div></div>
+</div>
 </div>
 </div>
 
@@ -203,6 +200,12 @@
 <div class="card"><div class="card-title">📨 长距离信息投递</div><div class="card-row"><span class="card-label">范围</span><span class="card-value">恒星际·>50AU</span></div><div class="card-row"><span class="card-label">延迟</span><span class="card-value" style="color:var(--orange)">数十年至百万年</span></div><button class="btn btn-outline btn-sm" onclick="sendMsg()">📝 发送文字讯息</button></div>
 </div>
 
+<!-- 页面20: 探索 -->
+<div class="page" id="page20">
+<div class="status-bar"><span class="time" id="st20">--</span><span id="bat20">🔋 100%</span></div>
+<div id="exploreContent"></div>
+</div>
+
 </main>
 
 <nav class="mobile-tabs" id="mobileTabs">
@@ -211,6 +214,7 @@
 <button data-page="page5"><span class="badge" id="bdg2"></span>📋 订单</button>
 <button data-page="page6">🪪 通行证</button>
 <button data-page="page10">📡 监控</button>
+<button data-page="page20">🔭 探索</button>
 </nav>
 
 </div>
